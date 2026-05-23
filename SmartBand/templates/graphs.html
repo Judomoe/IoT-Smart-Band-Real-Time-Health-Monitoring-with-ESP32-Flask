@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Graphs</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta http-equiv="refresh" content="60"> <!-- Fallback -->
+</head>
+<body>
+    <h2>Health Data for Signup ID {{ signupId }}</h2>
+
+    <canvas id="hrChart"></canvas>
+    <canvas id="tempChart"></canvas>
+    <canvas id="oxygenChart"></canvas>
+    <canvas id="stepsChart"></canvas>
+
+    <script>
+        // JavaScript-based refresh after 60 seconds
+        window.onload = function () {
+            setTimeout(() => {
+                window.location.reload();
+            }, 60000); // 60,000 ms = 60 seconds
+        };
+
+        const labels = {{ timestamps|tojson }};
+        const createChart = (id, label, data, color) => {
+            new Chart(document.getElementById(id), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: label,
+                        data: data,
+                        borderColor: color,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { display: true, title: { display: true, text: 'Time' }},
+                        y: { display: true }
+                    }
+                }
+            });
+        };
+
+        createChart("hrChart", "Heart Rate", {{ hr|tojson }}, 'red');
+        createChart("tempChart", "Temperature (°C)", {{ temp|tojson }}, 'orange');
+        createChart("oxygenChart", "Blood Oxygen (%)", {{ oxygen|tojson }}, 'blue');
+        createChart("stepsChart", "Steps", {{ steps|tojson }}, 'green');
+    </script>
+</body>
+</html>

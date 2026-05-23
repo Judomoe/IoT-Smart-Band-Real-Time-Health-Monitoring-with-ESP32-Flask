@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Fitness Dashboard</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f5f7fa;
+      color: #333;
+      padding: 1rem;
+    }
+    h1 { text-align: center; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(240px,1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 1rem;
+    }
+    .card label {
+      display: block;
+      margin-bottom: 0.25rem;
+      font-weight: 500;
+    }
+    .card input,
+    .card select {
+      width: 100%;
+      padding: 0.4rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+      margin-bottom: 0.8rem;
+    }
+    .card .radio-group {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .card .radio-group label {
+      font-weight: normal;
+    }
+    #results {
+      text-align: center;
+      padding: 1rem;
+      margin-top: 1rem;
+      background: #e1f5fe;
+      border-radius: 8px;
+    }
+    #results p { margin: 0.5rem 0; font-size: 1.1rem; }
+    button {
+      display: block;
+      margin: 0 auto;
+      padding: 0.6rem 1.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 4px;
+      background: #0288d1;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover { background: #0277bd; }
+  </style>
+</head>
+<body>
+  <h1>Fitness Dashboard</h1>
+
+  <div class="grid">
+    <!-- Workout intensity -->
+    <div class="card">
+      <label for="intensity">Workout Intensity</label>
+      <select id="intensity">
+        <option value="3">Low</option>
+        <option value="5">Moderate</option>
+        <option value="8">High</option>
+      </select>
+
+      <label for="duration">Workout Duration (min)</label>
+      <input type="number" id="duration" min="0" value="30">
+
+      <label for="type">Workout Type</label>
+      <select id="type">
+        <option value="1.0">General</option>
+        <option value="8.0">Running</option>
+        <option value="7.5">Cycling</option>
+        <option value="6.0">Swimming</option>
+        <option value="4.0">Weightlifting</option>
+      </select>
+    </div>
+
+    <!-- Sleep, Water, Body Fat, Mode -->
+    <div class="card">
+      <label for="sleep">Sleep Hours</label>
+      <input type="number" id="sleep" min="0" step="0.1" value="7">
+
+      <label for="water">Water Intake (L)</label>
+      <input type="number" id="water" min="0" step="0.1" value="2">
+
+      <label for="bodyfat">Body-Fat (%)</label>
+      <input type="number" id="bodyfat" min="0" step="0.1" value="15">
+
+      <label>Mode</label>
+      <div class="radio-group">
+        <label><input type="radio" name="mode" value="before" checked> Before Workout</label>
+        <label><input type="radio" name="mode" value="after"> After Workout</label>
+      </div>
+    </div>
+  </div>
+
+  <button id="calcBtn">Calculate</button>
+
+  <div id="results" style="display:none">
+    <p><strong>BMI:</strong> <span id="bmiVal"></span></p>
+    <p><strong>Calories Burned:</strong> <span id="calVal"></span> kcal</p>
+    <p><strong>Sleep:</strong> <span id="sleepVal"></span> hrs</p>
+    <p><strong>Water Intake:</strong> <span id="waterVal"></span> L</p>
+    <p><strong>Body-Fat:</strong> <span id="bfVal"></span> %</p>
+    <p><strong>Mode:</strong> <span id="modeVal"></span></p>
+  </div>
+
+  <script>
+    // Hardcoded values for demo
+    const weightKg = 70;   // Example: 70kg
+    const heightCm = 175;  // Example: 175cm
+
+    document.getElementById('calcBtn').addEventListener('click', () => {
+      const metIntensity = parseFloat(document.getElementById('intensity').value);
+      const workoutType  = parseFloat(document.getElementById('type').value);
+      const durationMin  = parseFloat(document.getElementById('duration').value);
+
+      const sleepH  = parseFloat(document.getElementById('sleep').value);
+      const waterL  = parseFloat(document.getElementById('water').value);
+      const bfPct   = parseFloat(document.getElementById('bodyfat').value) || 0;
+      const mode    = document.querySelector('input[name="mode"]:checked').value;
+
+      const heightM = heightCm / 100;
+      const bmi     = (weightKg / (heightM * heightM)).toFixed(1);
+      const totalMET = (metIntensity + workoutType) / 2;
+      const calories = (totalMET * weightKg * (durationMin / 60)).toFixed(0);
+
+      document.getElementById('bmiVal').textContent   = bmi;
+      document.getElementById('calVal').textContent   = calories;
+      document.getElementById('sleepVal').textContent = sleepH.toFixed(1);
+      document.getElementById('waterVal').textContent = waterL.toFixed(1);
+      document.getElementById('bfVal').textContent    = bfPct.toFixed(1);
+      document.getElementById('modeVal').textContent  = mode === 'before' ? 'Before Workout' : 'After Workout';
+
+      document.getElementById('results').style.display = 'block';
+      document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>
